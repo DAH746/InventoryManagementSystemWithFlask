@@ -17,7 +17,12 @@ def hello():
 def loginPage():
     return render_template('SignIn.html')
 
-
+@app.route('/login_data', methods = ['GET', 'POST'])
+def logintest():
+    print("----------------------------------------> yoyoyo")
+    data = request.form['user_login_data']
+    print(data)
+    return None
 
 if __name__ == '__main__':
 
