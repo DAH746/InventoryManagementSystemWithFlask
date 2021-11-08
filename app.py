@@ -15,7 +15,7 @@ def hello():
 
 @app.route('/login')
 def loginPage():
-    return render_template('index.html')
+    return render_template('SignIn.html')
 
 
 
