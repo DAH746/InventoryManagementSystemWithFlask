@@ -158,6 +158,61 @@ def upload():
 
     return render_template("result.html",msg =msg)
 
+@app.route('/newproduct')
+def new_product():
+    authenticated = ['Yes', 'No']
+    return render_template("newproduct.html", authenticated=authenticated)
+
+def IsProdNew(prod_id):
+    con = sql.connect("InventoryDatabase.db")
+    cur = con.cursor()
+    cur.execute("Select prod_id from Inventory WHERE prod_id=?",(prod_id, ))
+    all_prod_id = cur.fetchall();
+    if len(all_prod_id) != 0:
+        return False
+    return True
+
+@app.route('/addproduct',methods = ['POST', 'GET'])
+def add_product():
+    if request.method =="POST":
+        try:
+            
+            prod_id = request.form['prod_ID']
+            prod_name = request.form['prod_name']
+            desc = request.form['desc']
+            quantity = request.form['quantity']
+            auth = request.form['auth']
+            pic_id = request.form['pic_id']
+            
+            checkIfProdIsNew = IsProdNew(prod_id)
+
+            if checkIfProdIsNew: 
+                with sql.connect("InventoryDatabase.db") as con:
+                    cur = con.cursor()
+                    cur.execute("INSERT INTO Inventory (prod_ID,prod_name,desc,quantity,auth,pic_id) VALUES (?,?,?,?,?,?)",(prod_id,prod_name,desc,quantity,auth,pic_id) )
+                    con.commit()
+                    msg = "Product successfully added"
+
+            if not checkIfProdIsNew:
+                msg = "This is an exsiting user"
+        except:
+            con.rollback()
+            msg = "Error in insert operation"
+
+        finally:
+            return render_template("result.html",msg = msg)
+            con.close()
+
+@app.route('/listprods')
+def list_prods():
+    con = sql.connect("InventoryDatabase.db")
+    con.row_factory = sql.Row
+
+    cur = con.cursor()
+    cur.execute("select * from Inventory")
+
+    rows = cur.fetchall();
+    return render_template("listprods.html", rows = rows)
 
 if __name__ == '__main__':
    app.run(debug = True)
