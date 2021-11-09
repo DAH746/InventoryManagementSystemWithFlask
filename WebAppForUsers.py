@@ -130,7 +130,7 @@ def check_user_login():
 
 @app.route('/s3UploadTest')
 def s3_upload():
-        if LOGIN:
+    if LOGIN:
         return render_template('s3UploadTest.html')
     else:
         msg = "Please login first"
