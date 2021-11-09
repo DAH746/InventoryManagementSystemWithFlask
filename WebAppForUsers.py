@@ -148,6 +148,10 @@ def upload():
 
     return render_template("result.html",msg =msg)
 
+@app.route('/devTest')
+# Show future version of what our home page will be
+def devTest():
+    return render_template('futureHomePage.html')
 
 if __name__ == '__main__':
    app.run(debug = True)
