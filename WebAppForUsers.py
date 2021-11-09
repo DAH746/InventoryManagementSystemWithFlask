@@ -51,28 +51,29 @@ def home():
 
 @app.route('/enternewuser')
 def new_user():
-    return render_template("newuser.html")
+    roles = ['Warehouse', 'Authenticator', 'Customer']
+    return render_template("newuser.html", roles=roles)
 
 @app.route('/adduser',methods = ['POST', 'GET'])
 def add_user():
     if request.method =="POST":
         try:
+            
             user_id = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(8)])
             email = request.form['email']
-            print((type(email)))
-            
             fn = request.form['fn']
             ln = request.form['ln']
             pword = request.form['pword']
             addr = request.form['addr']
             city = request.form['city']
+            role = request.form['role']
 
             checkIfUserIsNew = IsUserNew(email)
             date_joined = datetime.now()
             if checkIfUserIsNew: 
                 with sql.connect("UserDatabase.db") as con:
                     cur = con.cursor()
-                    cur.execute("INSERT INTO Users (user_id,email,first_name,last_name,pword,date_joined,address,city) VALUES (?,?,?,?,?,?,?,?)",(user_id,email,fn,ln,pword,date_joined,addr,city) )
+                    cur.execute("INSERT INTO Users (user_id,email,first_name,last_name,pword,date_joined,address,city,role) VALUES (?,?,?,?,?,?,?,?,?)",(user_id,email,fn,ln,pword,date_joined,addr,city,role) )
                     con.commit()
                     msg = "Record successfully added"
 

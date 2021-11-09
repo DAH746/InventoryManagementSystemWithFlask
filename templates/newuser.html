@@ -21,9 +21,18 @@
          
          City<br>
          <input type = "text" name = "city" /><br>
-
+         
+         Role<br>
+         <select name= role method="GET" action="/">
+            {% for role in roles %}
+            <option value= "{{role}}" SELECTED>{{role}}</option>"
+            {% endfor %}
+        </select><br>
+         <br>
          <input type = "submit" value = "submit" /><br>
       </form>
+
+
       
       <a href = "/">Go back to home page</a>
       
