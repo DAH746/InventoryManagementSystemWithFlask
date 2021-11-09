@@ -32,6 +32,8 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 s3 = boto3.client('s3')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 BUCKET_NAME = 'source-image-bucket-5623'
+global LOGIN
+LOGIN = False
 
 def IsUserNew(email):
     con = sql.connect("UserDatabase.db")
@@ -112,8 +114,11 @@ def check_user_login():
                 user_info = cur.fetchall();
                 if len(user_info) == 1:
                     msg = "Successful Login"
+                    global LOGIN
+                    LOGIN = True 
                 else:
                     msg = "Unsuccessful Login"
+                    LOGIN = False
 
         except:
             con.rollback()
@@ -125,7 +130,11 @@ def check_user_login():
 
 @app.route('/s3UploadTest')
 def s3_upload():
-    return render_template('s3UploadTest.html')
+        if LOGIN:
+        return render_template('s3UploadTest.html')
+    else:
+        msg = "Please login first"
+        return render_template("result.html",msg = msg)
 
 @app.route('/upload',methods=['post'])
 def upload():
