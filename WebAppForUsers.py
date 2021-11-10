@@ -18,19 +18,13 @@ Importing serveral packages
 - datetime
 - boto3
 - secure_filename
-
 Using  a user database and flask, creates a program to add users with several bits of info such as:
 user_id, enail, first and last name, password and address details
-
 Checks to see if the email already exists in the database.
-
 Allows user to list all users for debugging purposes
-
 Includes login function where the the user and upload picture to an S3 bucket to be resized
-
 New product database. Allows user to add new products (checks to see if the product has already been added)
 and then saves to database. User can also list all products in the database.
-
 """
 
 app = Flask(__name__, template_folder='templates') #Sets the templates folder for the website
