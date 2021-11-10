@@ -10,8 +10,7 @@ def list_of_files(getFromSourceBucket):
     else:
         nameOfBucketToBeUsedToPullDataFrom = 'refactored-image-bucket-5623'
 
-        #TEST FOR GEROGE'S GIT, DELME AFTER
-
+        
     objectRepresentingAnS3Bucket = boto3.resource('s3')
     my_bucket = objectRepresentingAnS3Bucket.Bucket(nameOfBucketToBeUsedToPullDataFrom)
     allObjectsFromRefactoredBucket = my_bucket.objects.all()
