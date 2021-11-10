@@ -5,7 +5,7 @@ import string
 from datetime import datetime
 import boto3
 from werkzeug.utils import secure_filename
-import s3_bucket_iterator
+import s3_bucket_operations
 
 """
 Importing serveral packages
@@ -263,7 +263,10 @@ def list_prods():
 def devTest():
 
     # START - Dev test stuff
-    s3_bucket_iterator.list_of_files(getFromSourceBucket=False)
+    s3_bucket_operations.getFileNamesOfObjectsWithinAnS3Bucket(getFromSourceBucket=False)
+
+    s3_bucket_operations.getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled="source-image-bucket-5623",
+                                                           nameOfObjectFile="beach.jpg")
     # END - Dev test stuff
 
     return render_template('futureHomePage.html') # todo keep this here

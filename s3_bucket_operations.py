@@ -1,8 +1,9 @@
 import boto3
 
 
-def list_of_files(getFromSourceBucket):
-    # Grabs list of all objects (names) [images in our case] from our refactored S3 bucket
+def getFileNamesOfObjectsWithinAnS3Bucket(getFromSourceBucket):
+    # Grabs list of all objects (names) [images in our case] from either our source or refactored S3 bucket
+    # Returns a list of the names of all objects within an S3 bucket
     # "getFromSourceBucket" -> If true, get the items from the stock bucket, if not we would only want to get it from the refactored bucket
 
     if getFromSourceBucket:
@@ -28,4 +29,20 @@ def list_of_files(getFromSourceBucket):
     print(listOfObjectsAttainedFromGivenS3Bucket)
 
     return listOfObjectsAttainedFromGivenS3Bucket
-    # return jsonify({"listOfObjectsAttainedFromGivenS3Bucket":"{}".format(objects.key)})
+
+def getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled, nameOfObjectFile):
+    # This function will return a single URL of the object [file] from a public S3 bucket
+    # This is achieved using concatenation of a URL that is used to access S3 items, but with the irrelevant information removed and the relevant included.
+
+    defaultUrl = "https://<BUCKET-NAME>.s3.<REGION-NAME>.amazonaws.com/<NAME-OF-FILE>"
+    theRegionOfOurBuckets = "eu-west-2"
+
+    objectURL = defaultUrl.replace("<BUCKET-NAME>", nameOfS3BucketToBeCalled)
+    objectURL = objectURL.replace("<REGION-NAME>", theRegionOfOurBuckets)
+    objectURL = objectURL.replace("<NAME-OF-FILE>", nameOfObjectFile)
+
+    # Debug - final URL for an object
+    print("Debug final URL for an object: " + objectURL)
+
+    return objectURL
+
