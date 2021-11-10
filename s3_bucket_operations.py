@@ -11,7 +11,6 @@ def getFileNamesOfObjectsWithinAnS3Bucket(getFromSourceBucket):
     else:
         nameOfBucketToBeUsedToPullDataFrom = 'refactored-image-bucket-5623'
 
-        
     objectRepresentingAnS3Bucket = boto3.resource('s3')
     my_bucket = objectRepresentingAnS3Bucket.Bucket(nameOfBucketToBeUsedToPullDataFrom)
     allObjectsFromRefactoredBucket = my_bucket.objects.all()
