@@ -1,7 +1,7 @@
 <html>
    <body>
       
-      <form action = "{{ url_for('add_product') }}" method = "POST">
+      <form action = "{{ url_for('add_product') }}" method = "POST" enctype="multipart/form-data">
          <h3>User Information</h3>
 
          Product ID<br>
@@ -23,12 +23,17 @@
          <select name= auth method="GET" action="/">
             {% for auth in authenticated %}
             <option value= "{{auth}}" SELECTED>{{auth}}</option>"
-            {% endfor %}
+            {% endfor %}<br>
+         Picture<br>
         </select><br>
-         
+           <input type="file" name="file" value="file">
+           <hr>
+           <input type = "submit" value = "submit" /><br>
+         </form>
          <br>
-         <input type = "submit" value = "submit" /><br>
-      </form>
+         
+
+
 
 
       
@@ -36,3 +41,5 @@
       
    </body>
 </html>
+
+
