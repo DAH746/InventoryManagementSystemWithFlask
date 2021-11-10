@@ -5,6 +5,7 @@ import string
 from datetime import datetime
 import boto3
 from werkzeug.utils import secure_filename
+import s3_bucket_iterator
 
 """
 Importing serveral packages
@@ -254,7 +255,12 @@ def list_prods():
 @app.route('/devTest')
 # Show future version of what our home page will be
 def devTest():
-    return render_template('futureHomePage.html')
+
+    # START - Dev test stuff
+    s3_bucket_iterator.list_of_files(getFromSourceBucket=False)
+    # END - Dev test stuff
+
+    return render_template('futureHomePage.html') # todo keep this here
 
 if __name__ == '__main__':
    app.run(debug = True) # Starts the app in debug mode
