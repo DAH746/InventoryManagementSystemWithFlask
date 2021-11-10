@@ -6,6 +6,8 @@ from datetime import datetime
 import boto3
 from werkzeug.utils import secure_filename
 import s3_bucket_operations
+import bucket_names_object
+import contains_all_urls_for_s3_buckets
 
 """
 Importing serveral packages
@@ -37,6 +39,10 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'} # Only allowed extensions allowed fo
 BUCKET_NAME = 'source-image-bucket-5623'
 # global LOGIN # Global login variable
 
+# START - Instantiate objects
+hasAllBucketNamesObject = bucket_names_object.bucket_names_object()
+containsAllUrlsForEachS3Bucket = contains_all_urls_for_s3_buckets.contains_all_urls_for_s3_buckets(hasAllBucketNamesObject)
+# END - Instantiate objects
 
 # Function checks if the email inputted from the user is currently in the database.
 # Queries the user database by selecting emails where the saved email is the same as the user
@@ -268,7 +274,7 @@ def devTest():
     # s3_bucket_operations.getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled="source-image-bucket-5623",
     #                                                        nameOfObjectFile="beach.jpg")
 
-    print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled="source-image-bucket-5623"))
+    print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled=hasAllBucketNamesObject.getSourceBucketName))
     # END - Dev test stuff
 
     return render_template('futureHomePage.html') # todo keep this here
