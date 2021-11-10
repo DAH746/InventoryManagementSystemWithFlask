@@ -19,29 +19,24 @@ Importing serveral packages
 - datetime
 - boto3
 - secure_filename
-
 Using  a user database and flask, creates a program to add users with several bits of info such as:
 user_id, enail, first and last name, password and address details
-
 Checks to see if the email already exists in the database.
-
 Allows user to list all users for debugging purposes
-
 Includes login function where the the user and upload picture to an S3 bucket to be resized
-
 New product database. Allows user to add new products (checks to see if the product has already been added)
 and then saves to database. User can also list all products in the database.
-
 """
 
 app = Flask(__name__, template_folder='templates') #Sets the templates folder for the website
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # Sets maximum filesize to be uploaded at 1MB
 
+
 s3 = boto3.client('s3') # Sets up S3 client
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'} # Only allowed extensions allowed for file upload
 BUCKET_NAME = 'source-image-bucket-5623'
-global LOGIN # Global login variable
-LOGIN = False
+# global LOGIN # Global login variable
+
 
 # Function checks if the email inputted from the user is currently in the database.
 # Queries the user database by selecting emails where the saved email is the same as the user
@@ -133,6 +128,7 @@ def user_login():
 # Checks if the users details entered are correct. If the email and password match for the same user then they are logged in succesfully
 @app.route('/login',methods = ['POST'])
 def check_user_login():
+    global LOGIN
     if request.method =="POST":
         try:
             # Gets the information from the user
@@ -148,25 +144,27 @@ def check_user_login():
                     # User is told they are logged in
                     msg = "Successful Login"
                     # Sets the global variable, therefore allowing this to be seen later on
-                    global LOGIN
                     LOGIN = True 
                 else:
                     # If anything else is found then the login is unsucessful and so the user is told
                     msg = "Unsuccessful Login"
                     LOGIN = False
-
         except:
             con.rollback()
             msg = "Error in insert operation"
 
         finally:
-            return render_template("result.html",msg = msg)
+            return (render_template("result.html",msg = msg))
             con.close()
 
 # Checks if the user is logged in and therefore allowed to upload a picture to the s3 bucket
 @app.route('/s3UploadTest')
 def s3_upload():
-    if LOGIN: # Checks if l=LOGIN is true and then allows the user to upload the file
+    global LOGIN
+    print("----------yoyoyoyo------------")
+    print(LOGIN)
+    
+    if LOGIN: # Checks if LOGIN is true and then allows the user to upload the file
         return render_template('s3UploadTest.html')
     else:
         msg = "Please login first" # If LOGIN is false, the user is asked to login
@@ -175,6 +173,7 @@ def s3_upload():
 # Uploads the file to the s3 bucket
 @app.route('/upload',methods=['post'])
 def upload():
+    global prod_id
     if request.method == 'POST':
         img = request.files['file'] # Takes the file, in this case apicture
         if img:
@@ -182,6 +181,7 @@ def upload():
             fileNameSplit = filename.split(".") # Splits the filename to get the extension
             fileExtention = fileNameSplit[1]
             if fileExtention in ALLOWED_EXTENSIONS: # Checks if the extensions are in the allowed extensions
+                filename = prod_id + "." + fileExtention
                 img.save(filename)
                 # Uploads the file to the s3 bucket
                 s3.upload_file(
@@ -215,16 +215,16 @@ def IsProdNew(prod_id):
 # Gets the information for the new product from the user via form
 @app.route('/addproduct',methods = ['POST', 'GET'])
 def add_product():
+    global prod_id
     if request.method =="POST":
         try:
-            
+
             prod_id = request.form['prod_ID']
             prod_name = request.form['prod_name']
             price = request.form['price']
             desc = request.form['desc']
             quantity = request.form['quantity']
             auth = request.form['auth']
-            pic_id = request.form['pic_id']
 
             checkIfProdIsNew = IsProdNew(prod_id) # Checks if the product is new or exisiting
 
@@ -232,7 +232,7 @@ def add_product():
                 with sql.connect("InventoryDatabase.db") as con:
                     cur = con.cursor()
                     # Inserts the new product into the database
-                    cur.execute("INSERT INTO Inventory (prod_ID,prod_name,price,desc,quantity,auth,pic_id) VALUES (?,?,?,?,?,?,?)",(prod_id,prod_name,price,desc,quantity,auth,pic_id) )
+                    cur.execute("INSERT INTO Inventory (prod_ID,prod_name,price,desc,quantity,auth) VALUES (?,?,?,?,?,?)",(prod_id,prod_name,price,desc,quantity,auth) )
                     con.commit()
                     msg = "Product successfully added" # Tells the user the outcome
 
@@ -243,7 +243,7 @@ def add_product():
             msg = "Error in insert operation"
 
         finally:
-            return render_template("result.html",msg = msg)
+            return render_template("s3UploadTest.html",msg = msg)
             con.close()
 
 # List the products from the database for the users to see
@@ -271,5 +271,9 @@ def devTest():
 
     return render_template('futureHomePage.html') # todo keep this here
 
+
 if __name__ == '__main__':
-   app.run(debug = True) # Starts the app in debug mode
+    # global LOGIN
+    global LOGIN, prod_id
+    LOGIN = False
+    app.run(debug = True) # Starts the app in debug mode

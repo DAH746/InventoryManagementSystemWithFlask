@@ -6,6 +6,7 @@
          <thead>
             <td>Product Id</td>
             <td>Product Name</td>
+            <td>Product Price</td>
             <td>Description</td>
             <td>Quantity</td>
             <td>Authenticated</td>
@@ -17,10 +18,10 @@
             <tr>
                <td>{{row["prod_id"]}}</td>
                <td>{{row["prod_name"]}}</td>
+               <td>{{row["price"]}}</td>
                <td>{{row["desc"]}}</td>
                <td>{{row['quantity']}}</td>
                <td>{{row['auth']}}</td>
-               <td>{{row['pic_id']}}</td>
             </tr>
          {% endfor %}
       </table>
