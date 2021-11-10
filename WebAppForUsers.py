@@ -263,10 +263,12 @@ def list_prods():
 def devTest():
 
     # START - Dev test stuff
-    s3_bucket_operations.getFileNamesOfObjectsWithinAnS3Bucket(getFromSourceBucket=False)
+    # s3_bucket_operations.getFileNamesOfObjectsWithinAnS3Bucket(nameOfS3BucketToBeCalled = "refactored-image-bucket-5623")
 
-    s3_bucket_operations.getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled="source-image-bucket-5623",
-                                                           nameOfObjectFile="beach.jpg")
+    # s3_bucket_operations.getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled="source-image-bucket-5623",
+    #                                                        nameOfObjectFile="beach.jpg")
+
+    print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled="source-image-bucket-5623"))
     # END - Dev test stuff
 
     return render_template('futureHomePage.html') # todo keep this here
