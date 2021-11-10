@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 import sqlite3 as sql
 import random
 import string
@@ -278,6 +278,11 @@ def devTest():
     # END - Dev test stuff
 
     return render_template('futureHomePage.html') # todo keep this here
+
+@app.route('/dispImage')
+def disp_image():
+    return render_template('displayImage.html')
+
 
 
 if __name__ == '__main__':
