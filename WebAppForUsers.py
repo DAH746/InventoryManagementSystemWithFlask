@@ -235,7 +235,7 @@ def add_product():
 
             if checkIfProdIsNew:
                 msgFromS3Upload = upload(prod_id, img)
-                temp_url = s3_bucket_operations.getURLOfONEObjectWithinAnS3Bucket(new_object.getRefactoredBucketName,
+                temp_url = s3_bucket_operations.getURLOfONEObjectWithinAnS3Bucket(hasAllBucketNamesObject.getRefactoredBucketName,
                                                                                   prod_id)
 
                 with sql.connect("InventoryDatabase.db") as con:
@@ -282,10 +282,24 @@ def devTest():
     # s3_bucket_operations.getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled="source-image-bucket-5623",
     #                                                        nameOfObjectFile="beach.jpg")
 
-    print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled="source-image-bucket-5623"))
+    print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled="refactored-image-bucket-5623"))
+
+    # DATABASE STUFFS
+    dbConnection = sql.connect("InventoryDatabase.db")
+    dbConnection.row_factory = sql.Row
+
+    cursor = dbConnection.cursor()
+    # cursor.execute("select prod_url from Inventory")
+    cursor.execute("select * from Inventory")
+
+    rows = cursor.fetchall()
+
+    print("\n -------- Database stuff from DEVTEST function ----------")
+    print(rows)
+
     # END - Dev test stuff
 
-    return render_template('futureHomePage.html')  # todo keep this here
+    return render_template('futureHomePage.html', rows=rows)  # todo keep this here
 
 
 @app.route('/dispImage')

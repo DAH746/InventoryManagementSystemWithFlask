@@ -59,7 +59,6 @@ def getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled):
     return listOfAllTheURLsOfObjectsWithinAnS3Bucket
 
 
-
 def determineTheBucketAndReturnTheBucketName(nameOfS3BucketToBeCalled):
     # Will return the correct bucket name, and if it does not match, then raise an exception
 
