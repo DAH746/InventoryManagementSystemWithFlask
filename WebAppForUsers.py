@@ -325,6 +325,10 @@ def devTest():
 def disp_image():
     return render_template('displayImage.html')
 
+@app.route('/newregistration')
+def newRegistrationPage():
+    return render_template('NewRegistrationPage.html')
+
 
 if __name__ == '__main__':
     # global LOGIN
