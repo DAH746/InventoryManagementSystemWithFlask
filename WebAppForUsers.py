@@ -211,7 +211,7 @@ def upload(prod_id, img):  # Uses the prod_id to name the picture uploaded to so
         else:
             msg = "Not a png/jpg/jpeg."  # Error occurs if the extension is not an allowed extension and tells the user this
 
-    return msg
+    return msg, filename
 
 
 # Gets the information for the new product from the user via form
@@ -233,9 +233,8 @@ def add_product():
             checkIfProdIsNew = IsProdNew(prod_id)  # Checks if the product is new or exisiting
 
             if checkIfProdIsNew:
-                msgFromS3Upload = upload(prod_id, img)
-                temp_url = s3_bucket_operations.getURLOfONEObjectWithinAnS3Bucket(new_object.getRefactoredBucketName,
-                                                                                  prod_id)
+                msgFromS3Upload, filename = upload(prod_id, img)
+                temp_url = s3_bucket_operations.getUrlForOneProd(filename)
 
                 with sql.connect("InventoryDatabase.db") as con:
                     cur = con.cursor()
