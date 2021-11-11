@@ -378,22 +378,26 @@ def check_user_info():
         msg = "Please login first"
         return render_template("result.html", msg=msg)
 
-@app.route('/edituser', methods=['POST', 'GET'])
+@app.route('/edituserinfo', methods=['POST', 'GET'])
 def edit_user():
-    if request.method == "POST":
-        # Fetches information from html form
-        fn = request.form['fn']
-        ln = request.form['ln']
-        pword = request.form['pword']
-        addr = request.form['addr']
-        city = request.form['city']
-        with sql.connect("UserDatabase.db") as con:
-            cur = con.cursor()
-            cur.execute(
-                "UPDATE INTO Users WHERE(user_id,email,first_name,last_name,pword,date_joined,address,city,role) VALUES (?,?,?,?,?,?,?,?,?)",
-                (user_id, email, fn, ln, pword, date_joined, addr, city, role))
-            con.commit()
-            msg = "Record successfully added"
+    # Fetches information from html form
+    fn = request.form['fn']
+    ln = request.form['ln']
+    pword = request.form['pword']
+    addr = request.form['addr']
+    city = request.form['city']
+    with sql.connect("UserDatabase.db") as con:
+        cur = con.cursor()
+        sql_query = """Update Users set first_name=?,last_name=?,pword=?,address=?,city=? where email=?"""
+        data = (fn,ln,pword,addr,city,login_email)
+        cur.execute(sql_query, data)
+        con.commit()
+        msg = "Record successfully edited"
+    return render_template("result.html", msg=msg)
+
+@app.route('/edituser')
+def dispEditInfo():
+    return render_template('EditProfilePage.html')
 
 
 
