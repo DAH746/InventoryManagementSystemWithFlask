@@ -66,6 +66,25 @@ def IsUserNew(email):
 # Returns the home.html template which allows the user to use the functions in the website.
 @app.route('/')
 def home():
+    dbConnection = sql.connect("InventoryDatabase.db")
+    dbConnection.row_factory = sql.Row
+
+    cursor = dbConnection.cursor()
+    # cursor.execute("select prod_url from Inventory")
+    cursor.execute("select * from Inventory")
+
+    rows = cursor.fetchall()
+
+    print("\n -------- Database stuff from DEVTEST function ----------")
+    print(rows)
+
+    # END - Dev test stuff
+
+    return render_template('futureHomePage.html', rows=rows)
+
+
+@app.route('/oldhome')
+def oldHome():
     return render_template('home.html')
 
 
