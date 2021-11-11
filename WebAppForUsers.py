@@ -176,30 +176,30 @@ def s3_upload():
         msg = "Please login first" # If LOGIN is false, the user is asked to login
         return render_template("result.html",msg = msg)
 
-# Uploads the file to the s3 bucket
-@app.route('/upload',methods=['post'])
-def upload():
-    global prod_id
-    if request.method == 'POST':
-        img = request.files['file'] # Takes the file, in this case apicture
-        if img:
-            filename = secure_filename(img.filename) # Gets the file name for the picture
-            fileNameSplit = filename.split(".") # Splits the filename to get the extension
-            fileExtention = fileNameSplit[1]
-            if fileExtention in ALLOWED_EXTENSIONS: # Checks if the extensions are in the allowed extensions
-                filename = prod_id + "." + fileExtention
-                img.save(filename)
-                # Uploads the file to the s3 bucket
-                s3.upload_file(
-                    Bucket = BUCKET_NAME,
-                    Filename=filename,
-                    Key = filename
-                )
-                msg = "Upload Done ! " # Tells the user the upload is complete
-            else:
-                msg = "Not a png/jpg/jpeg." # Error occurs if the extension is not an allowed extension and tells the user this
+# # Uploads the file to the s3 bucket
+# @app.route('/upload',methods=['post'])
+# def upload():
+#     global prod_id
+#     if request.method == 'POST':
+#         img = request.files['file'] # Takes the file, in this case apicture
+#         if img:
+#             filename = secure_filename(img.filename) # Gets the file name for the picture
+#             fileNameSplit = filename.split(".") # Splits the filename to get the extension
+#             fileExtention = fileNameSplit[1]
+#             if fileExtention in ALLOWED_EXTENSIONS: # Checks if the extensions are in the allowed extensions
+#                 filename = prod_id + "." + fileExtention
+#                 img.save(filename)
+#                 # Uploads the file to the s3 bucket
+#                 s3.upload_file(
+#                     Bucket = BUCKET_NAME,
+#                     Filename=filename,
+#                     Key = filename
+#                 )
+#                 msg = "Upload Done ! " # Tells the user the upload is complete
+#             else:
+#                 msg = "Not a png/jpg/jpeg." # Error occurs if the extension is not an allowed extension and tells the user this
 
-    return render_template("result.html",msg =msg)
+#     return render_template("result.html",msg =msg)
 
 # For adding new products to inventory
 @app.route('/newproduct')
@@ -218,30 +218,57 @@ def IsProdNew(prod_id):
         return False
     return True
 
+def upload(prod_id, img):
+    if img:
+        filename = secure_filename(img.filename) # Gets the file name for the picture
+        fileNameSplit = filename.split(".") # Splits the filename to get the extension
+        fileExtention = fileNameSplit[1]
+        if fileExtention in ALLOWED_EXTENSIONS: # Checks if the extensions are in the allowed extensions
+            filename = prod_id + "." + fileExtention
+            img.save(filename)
+            # Uploads the file to the s3 bucket
+            s3.upload_file(
+                Bucket = BUCKET_NAME,
+                Filename=filename,
+                Key = filename
+            )
+            msg = "Upload Done ! " # Tells the user the upload is complete
+        else:
+            msg = "Not a png/jpg/jpeg." # Error occurs if the extension is not an allowed extension and tells the user this
+
+    return msg
+
 # Gets the information for the new product from the user via form
 @app.route('/addproduct',methods = ['POST', 'GET'])
 def add_product():
-    global prod_id
+    # global prod_id
+    new_object = bucket_names_object.bucket_names_object()
     if request.method =="POST":
         try:
-
+            
             prod_id = request.form['prod_ID']
             prod_name = request.form['prod_name']
             price = request.form['price']
             desc = request.form['desc']
             quantity = request.form['quantity']
             auth = request.form['auth']
+            img = request.files['file'] # Takes the file, in this case apicture
 
             checkIfProdIsNew = IsProdNew(prod_id) # Checks if the product is new or exisiting
 
-            if checkIfProdIsNew: 
+            if checkIfProdIsNew:
+                print(prod_id, prod_name, price)
+                msgFromS3Upload = upload(prod_id, img)
+                temp_url = s3_bucket_operations.getURLOfONEObjectWithinAnS3Bucket(new_object.getRefactoredBucketName, prod_id)
+                print(temp_url)
+                print("-----------yoyoyoyoyo----------------")
                 with sql.connect("InventoryDatabase.db") as con:
                     cur = con.cursor()
                     # Inserts the new product into the database
-                    cur.execute("INSERT INTO Inventory (prod_ID,prod_name,price,desc,quantity,auth) VALUES (?,?,?,?,?,?)",(prod_id,prod_name,price,desc,quantity,auth) )
+                    cur.execute("INSERT INTO Inventory (prod_ID,prod_name,price,desc,quantity,auth,prod_url) VALUES (?,?,?,?,?,?,?)",(prod_id,prod_name,price,desc,quantity,auth,temp_url) )
                     con.commit()
                     msg = "Product successfully added" # Tells the user the outcome
-
+                    msg = msg + " and " + msgFromS3Upload
             if not checkIfProdIsNew: # If the product id is already there, the user will be told and the product is not added
                 msg = "This is an exsiting product"
         except:
@@ -249,9 +276,10 @@ def add_product():
             msg = "Error in insert operation"
 
         finally:
-            return render_template("s3UploadTest.html",msg = msg)
+            
+            return render_template("result.html",msg = msg)
             con.close()
-
+  
 # List the products from the database for the users to see
 @app.route('/listprods')
 def list_prods():
@@ -262,6 +290,8 @@ def list_prods():
     cur.execute("select * from Inventory")
 
     rows = cur.fetchall();
+    print("-------yoyoyo----------")
+    print(rows)
     return render_template("listprods.html", rows = rows)
 
 @app.route('/devTest')
