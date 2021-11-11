@@ -177,7 +177,7 @@ def user_login():
 # Checks if the users details entered are correct. If the email and password match for the same user then they are logged in succesfully
 @app.route('/login', methods=['POST'])
 def check_user_login():
-    global LOGIN, user_role
+    global LOGIN, user_role, login_email
     if request.method == "POST":
         try:
             # Gets the information from the user
@@ -192,6 +192,7 @@ def check_user_login():
                 if len(user_info) == 1:
                     # User is told they are logged in
                     msg = "Successful Login"
+                    login_email = email
                     # Sets the global variable, therefore allowing this to be seen later on
                     LOGIN = True
                     cur.execute("Select role from Users WHERE email=? AND pword=?", (email, pword,))
