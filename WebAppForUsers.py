@@ -351,6 +351,7 @@ def newRegistrationPage():
 
     return render_template('NewRegistrationPage.html', roles=roles)
 
+<<<<<<< HEAD
 @app.route('/clearuserlogin')
 def clearUserLogin():
     global LOGIN, user_role, login_email
@@ -359,7 +360,35 @@ def clearUserLogin():
     user_role = "Customer"
 
     return
+=======
+@app.route('/userinfo')
+def check_user_info():
+    if LOGIN:
+        with sql.connect("UserDatabase.db") as con:
+            cur = con.cursor()
+            # Selects the user where email and password match
+            cur.execute("Select * from Users WHERE email=?", (login_email,))
+            user_info = cur.fetchall();
+            print(user_info)
 
+        tup=user_info[0]
+
+        email = tup[1]
+        fn = tup[2]
+        ln = tup[3]
+        pword = tup[4]
+        date_joined = tup[5]
+        addr = tup[6]
+        city = tup[7]
+        role = tup[8]
+
+        return render_template("UserInfo.html", email=email,fn=fn,ln=ln,pword=pword,date_joined=date_joined,addr=addr,city=city,role=role)
+    else:
+        msg = "Please login first"
+        return render_template("result.html", msg=msg)
+>>>>>>> 3a5c3ad23f56c93f19bc17c5d5bba1c063c1a331
+
+        
 if __name__ == '__main__':
     # global LOGIN
     global LOGIN, user_role
