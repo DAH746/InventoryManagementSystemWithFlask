@@ -26,7 +26,7 @@ user_id, enail, first and last name, password and address details
 Checks to see if the email already exists in the database.
 Allows user to list all users for debugging purposes
 Includes login function where the the user and upload picture to an S3 bucket to be resized
-New product database. Allows user to add new products (checks to see if the product has already been added)
+New product database. Allows user to add new products (checks to see if the  has already been added)
 and then saves to database. User can also list all products in the database.
 """
 
@@ -37,6 +37,7 @@ app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 # Sets maximum filesize to be upl
 s3 = boto3.client('s3') # Sets up S3 client
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'} # Only allowed extensions allowed for file upload
 BUCKET_NAME = 'source-image-bucket-5623'
+
 # global LOGIN # Global login variable
 
 # START - Instantiate objects
@@ -163,44 +164,6 @@ def check_user_login():
             return (render_template("result.html",msg = msg))
             con.close()
 
-# Checks if the user is logged in and therefore allowed to upload a picture to the s3 bucket
-@app.route('/s3UploadTest')
-def s3_upload():
-    global LOGIN
-    print("----------yoyoyoyo------------")
-    print(LOGIN)
-    
-    if LOGIN: # Checks if LOGIN is true and then allows the user to upload the file
-        return render_template('s3UploadTest.html')
-    else:
-        msg = "Please login first" # If LOGIN is false, the user is asked to login
-        return render_template("result.html",msg = msg)
-
-# # Uploads the file to the s3 bucket
-# @app.route('/upload',methods=['post'])
-# def upload():
-#     global prod_id
-#     if request.method == 'POST':
-#         img = request.files['file'] # Takes the file, in this case apicture
-#         if img:
-#             filename = secure_filename(img.filename) # Gets the file name for the picture
-#             fileNameSplit = filename.split(".") # Splits the filename to get the extension
-#             fileExtention = fileNameSplit[1]
-#             if fileExtention in ALLOWED_EXTENSIONS: # Checks if the extensions are in the allowed extensions
-#                 filename = prod_id + "." + fileExtention
-#                 img.save(filename)
-#                 # Uploads the file to the s3 bucket
-#                 s3.upload_file(
-#                     Bucket = BUCKET_NAME,
-#                     Filename=filename,
-#                     Key = filename
-#                 )
-#                 msg = "Upload Done ! " # Tells the user the upload is complete
-#             else:
-#                 msg = "Not a png/jpg/jpeg." # Error occurs if the extension is not an allowed extension and tells the user this
-
-#     return render_template("result.html",msg =msg)
-
 # For adding new products to inventory
 @app.route('/newproduct')
 def new_product():
@@ -218,7 +181,7 @@ def IsProdNew(prod_id):
         return False
     return True
 
-def upload(prod_id, img):
+def upload(prod_id, img): # Uses the prod_id to name the picture uploaded to source bucket
     if img:
         filename = secure_filename(img.filename) # Gets the file name for the picture
         fileNameSplit = filename.split(".") # Splits the filename to get the extension
@@ -228,7 +191,7 @@ def upload(prod_id, img):
             img.save(filename)
             # Uploads the file to the s3 bucket
             s3.upload_file(
-                Bucket = BUCKET_NAME,
+                Bucket = (hasAllBucketNamesObject.getSourceBucketName),
                 Filename=filename,
                 Key = filename
             )
@@ -242,7 +205,7 @@ def upload(prod_id, img):
 @app.route('/addproduct',methods = ['POST', 'GET'])
 def add_product():
     # global prod_id
-    new_object = bucket_names_object.bucket_names_object()
+    
     if request.method =="POST":
         try:
             
@@ -257,11 +220,10 @@ def add_product():
             checkIfProdIsNew = IsProdNew(prod_id) # Checks if the product is new or exisiting
 
             if checkIfProdIsNew:
-                print(prod_id, prod_name, price)
+
                 msgFromS3Upload = upload(prod_id, img)
                 temp_url = s3_bucket_operations.getURLOfONEObjectWithinAnS3Bucket(new_object.getRefactoredBucketName, prod_id)
-                print(temp_url)
-                print("-----------yoyoyoyoyo----------------")
+
                 with sql.connect("InventoryDatabase.db") as con:
                     cur = con.cursor()
                     # Inserts the new product into the database
@@ -290,8 +252,7 @@ def list_prods():
     cur.execute("select * from Inventory")
 
     rows = cur.fetchall();
-    print("-------yoyoyo----------")
-    print(rows)
+
     return render_template("listprods.html", rows = rows)
 
 @app.route('/devTest')
