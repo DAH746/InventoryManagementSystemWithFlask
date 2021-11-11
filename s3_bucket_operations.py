@@ -1,5 +1,6 @@
 import boto3
 import bucket_names_object
+import time
 
 
 def getFileNamesOfObjectsWithinAnS3Bucket(nameOfS3BucketToBeCalled):
@@ -76,6 +77,7 @@ def determineTheBucketAndReturnTheBucketName(nameOfS3BucketToBeCalled):
 
 
 def getUrlForOneProd(prod_id):
+    time.sleep(5)
     """Get a list of keys in an S3 bucket and return URL for specific product item."""
     s3 = boto3.client('s3')
     keys = []

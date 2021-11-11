@@ -234,6 +234,8 @@ def add_product():
 
             if checkIfProdIsNew:
                 msgFromS3Upload, filename = upload(prod_id, img)
+                print("-----yoyoyooy------")
+                print(filename)
                 temp_url = s3_bucket_operations.getUrlForOneProd(filename)
 
                 with sql.connect("InventoryDatabase.db") as con:
