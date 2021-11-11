@@ -305,16 +305,26 @@ def devTest():
     # s3_bucket_operations.getURLsOfAnObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled="source-image-bucket-5623",
     #                                                        nameOfObjectFile="beach.jpg")
 
-    print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled=hasAllBucketNamesObject.getSourceBucketName))
+    # print(s3_bucket_operations.getAllObjectsURLsFromS3AsList(nameOfS3BucketToBeCalled=hasAllBucketNamesObject.getSourceBucketName))
 
+    # DATABASE STUFFS
+    dbConnection = sql.connect("InventoryDatabase.db")
+    dbConnection.row_factory = sql.Row
+
+    cursor = dbConnection.cursor()
+    cursor.execute("select prod_url from Inventory")
+
+    objectUrlsFromS3 = cursor.fetchall()
+
+    print("\n -------- Database stuff from DEVTEST function ----------")
+    print(objectUrlsFromS3)
     # END - Dev test stuff
 
-    return render_template('futureHomePage.html') # todo keep this here
+    return render_template('futureHomePage.html', objectUrlsFromS3=objectUrlsFromS3) # todo keep this here
 
 @app.route('/dispImage')
 def disp_image():
     return render_template('displayImage.html')
-
 
 
 if __name__ == '__main__':
