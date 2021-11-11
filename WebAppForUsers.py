@@ -351,16 +351,7 @@ def newRegistrationPage():
 
     return render_template('NewRegistrationPage.html', roles=roles)
 
-<<<<<<< HEAD
-@app.route('/clearuserlogin')
-def clearUserLogin():
-    global LOGIN, user_role, login_email
-    login_email = ""
-    LOGIN = False
-    user_role = "Customer"
 
-    return
-=======
 @app.route('/userinfo')
 def check_user_info():
     if LOGIN:
@@ -386,12 +377,22 @@ def check_user_info():
     else:
         msg = "Please login first"
         return render_template("result.html", msg=msg)
->>>>>>> 3a5c3ad23f56c93f19bc17c5d5bba1c063c1a331
 
-        
+
+@app.route('/clearuserlogin')
+def clearUserLogin():
+    global LOGIN, user_role, login_email
+    if LOGIN:
+        login_email = ""
+        LOGIN = False
+        user_role = "Customer"
+        return render_template("SuccessfulLogout.html")
+    else:
+        return render_template("UnSuccessfulLogout.html")
+
 if __name__ == '__main__':
     # global LOGIN
-    global LOGIN, user_role
+    global LOGIN, user_role, login_email
     LOGIN = False
     user_role = "Customer"
     app.run(debug=True)  # Starts the app in debug mode
