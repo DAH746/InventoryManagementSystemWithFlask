@@ -155,7 +155,15 @@
   <!--            </svg>-->
 
               <div class="card-body">
-                <p class="card-text"> {{row['desc']}}</p>
+
+                <p class="card-text">
+                  Product name: {{row["prod_name"]}} <br>
+                  Price: £{{row["price"]}} <br>
+                  Quantity available: {{row['quantity']}} <br>
+                  Description: {{row['desc']}} <br>
+
+                </p>
+
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
                     <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
