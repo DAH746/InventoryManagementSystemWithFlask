@@ -23,7 +23,7 @@ def getFileNamesOfObjectsWithinAnS3Bucket(nameOfS3BucketToBeCalled):
         listOfObjectsAttainedFromGivenS3Bucket.append(objects.key)
         # objects.key is the name of the file in the s3 bucket within current iteration
 
-    print(listOfObjectsAttainedFromGivenS3Bucket)
+    # print(listOfObjectsAttainedFromGivenS3Bucket)
 
     return listOfObjectsAttainedFromGivenS3Bucket
 
@@ -39,7 +39,7 @@ def getURLOfONEObjectWithinAnS3Bucket(nameOfS3BucketToBeCalled, nameOfObjectFile
     objectURL = objectURL.replace("<NAME-OF-FILE>", nameOfObjectFile)
 
     # Debug - final URL for an object
-    print("Debug final URL for an object: " + objectURL)
+    # print("Debug final URL for an object: " + objectURL)
 
     return objectURL
 

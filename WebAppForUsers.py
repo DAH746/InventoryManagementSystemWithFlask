@@ -70,15 +70,14 @@ def home():
     dbConnection.row_factory = sql.Row
 
     cursor = dbConnection.cursor()
-    # cursor.execute("select prod_url from Inventory")
+
     cursor.execute("select * from Inventory")
 
     rows = cursor.fetchall()
 
-    print("\n -------- Database stuff from DEVTEST function ----------")
-    print(rows)
+    # print("\n -------- Database stuff from home function ----------")
+    # print(rows)
 
-    # END - Dev test stuff
 
     return render_template('futureHomePage.html', rows=rows)
 
