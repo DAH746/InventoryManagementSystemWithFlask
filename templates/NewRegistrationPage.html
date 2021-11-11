@@ -11,7 +11,7 @@
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sign-in/">
 
-    
+
 
     <!-- Bootstrap core CSS -->
 
@@ -31,33 +31,71 @@
       }
     </style>
 
-    
+
     <!-- Custom styles for this template -->
-    <link href="static/signin.css" rel="stylesheet">
+<link href="static/signin.css" rel="stylesheet">
   </head>
   <body class="text-center">
-    
+
 <main class="form-signin">
-  <form action="{{ url_for('check_user_login') }}" name="user_login_data" method = "POST">
+  <form action="{{ url_for('add_user') }}" name="user_login_data" method = "POST">
 <!--    <img class="mb-4" src="assets/logo.jpg" alt="" width="72" height="57">-->
-    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+    <h1 class="h3 mb-3 fw-normal">New User Account Registration</h1>
+
+      <br>
 
     <div class="form-floating">
       <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name = "email">
       <label for="floatingInput">Email address</label>
     </div>
 
+      <br>
+
+    <div class="form-floating">
+      <input type="text" class="form-control" id="enterFirstName" placeholder="Enter First Name" name = "fn">
+      <label for="enterFirstName">First Name</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="text" class="form-control" id="enterLastName" placeholder="Enter Last Name" name = "ln">
+      <label for="enterLastName">Last Name</label>
+    </div>
+
+      <br>
+
     <div class="form-floating">
       <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name = "pword">
       <label for="floatingPassword">Password</label>
     </div>
 
-    <div class="checkbox mb-3">
-      <label>
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
+        <br>
+
+    <div class="form-floating">
+      <input type="text" class="form-control" id="enterAddress" placeholder="Enter Address" name = "addr">
+      <label for="enterAddress">Enter Address</label>
     </div>
-    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+
+    <div class="form-floating">
+      <input type="text" class="form-control" id="enterCity" placeholder="Enter City" name = "city">
+      <label for="enterCity">City</label>
+    </div>
+
+      <br>
+
+    <select class="form-select" aria-label="Default select example" name="role">
+      <option selected>Select type of account</option>
+
+        {% for role in roles %}
+
+      <option value="{{role}}">{{role}}</option>
+
+        {% endfor %}
+    </select>
+
+    <br>
+
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
+
   </form>
     <br>
     <a href = "/">Go back to home page</a>
