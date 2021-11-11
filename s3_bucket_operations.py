@@ -1,4 +1,5 @@
 import boto3
+import bucket_names_object
 
 
 def getFileNamesOfObjectsWithinAnS3Bucket(nameOfS3BucketToBeCalled):
@@ -71,3 +72,26 @@ def determineTheBucketAndReturnTheBucketName(nameOfS3BucketToBeCalled):
         return refactoredBucket
     else:
         raise ValueError("Inputted S3 bucket name does not match any within the function: 'determineTheBucketAndReturnTheBucketName' in s3_bucket_operations.py")
+
+
+def getUrlForOneProd(prod_id):
+    """Get a list of keys in an S3 bucket and return URL for specific product item."""
+    s3 = boto3.client('s3')
+    keys = []
+    new_object = bucket_names_object.bucket_names_object()
+    refactored_bucket = new_object.getRefactoredBucketName
+    s3_resource = boto3.resource('s3')
+    s3_bucket = s3_resource.Bucket(refactored_bucket)
+
+    fileNameSplit = prod_id.split(".") # Splits the filename to get the extension
+    filename = fileNameSplit[0]
+    filename = filename + "_"
+
+    resp = s3.list_objects_v2(Bucket=refactored_bucket)
+    for obj in resp['Contents']:
+        keys.append(obj['Key'])
+
+    for key in keys:
+        if filename in key:
+            path_name = getURLOfONEObjectWithinAnS3Bucket(refactored_bucket, key)
+    return path_name
