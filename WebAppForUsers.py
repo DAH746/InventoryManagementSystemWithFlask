@@ -84,7 +84,16 @@ def home():
 
 @app.route('/oldhome')
 def oldHome():
-    return render_template('home.html')
+    print(user_role)
+    print(LOGIN)
+    if (LOGIN) and (user_role == "Warehouse" or user_role =="Authenticator"):
+        return render_template('home.html')
+    elif not LOGIN:
+        msg = "Please login first"
+        return render_template("result.html", msg=msg)
+    else:
+        msg = "Not authorised"
+        return render_template("result.html", msg=msg)
 
 
 # Called when the user wants to add a new user
@@ -92,9 +101,15 @@ def oldHome():
 # Includes a role for who they are, depending on the role, they can use different functions.
 @app.route('/enternewuser')
 def new_user():
-    roles = ['Warehouse', 'Authenticator', 'Customer']
-    return render_template("newuser.html", roles=roles)
-
+    if (LOGIN) and (user_role == "Warehouse" or "Authenticator"):
+        roles = ['Warehouse', 'Authenticator', 'Customer']
+        return render_template("newuser.html", roles=roles)
+    elif not LOGIN:
+        msg = "Please login first"
+        return render_template("result.html", msg=msg)
+    else:
+        msg = "Not authorised"
+        return render_template("result.html", msg=msg)
 
 # newuser.html routes the form to this function
 # Organises the data inputted from user for inserting to user database
@@ -162,7 +177,7 @@ def user_login():
 # Checks if the users details entered are correct. If the email and password match for the same user then they are logged in succesfully
 @app.route('/login', methods=['POST'])
 def check_user_login():
-    global LOGIN
+    global LOGIN, user_role
     if request.method == "POST":
         try:
             # Gets the information from the user
