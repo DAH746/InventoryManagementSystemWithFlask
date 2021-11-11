@@ -90,7 +90,7 @@ def oldHome():
 # Called when the user wants to add a new user
 # Returns the newuser.html template with the iput form required for getting the data from the user.
 # Includes a role for who they are, depending on the role, they can use different functions.
-@app.route('/enternewuser')
+@app.route('/enternewuserold')
 def new_user():
     roles = ['Warehouse', 'Authenticator', 'Customer']
     return render_template("newuser.html", roles=roles)
@@ -329,9 +329,11 @@ def devTest():
 def disp_image():
     return render_template('displayImage.html')
 
-@app.route('/newregistration')
+@app.route('/enternewuser')
 def newRegistrationPage():
-    return render_template('NewRegistrationPage.html')
+    roles = ['Warehouse', 'Authenticator', 'Customer']
+
+    return render_template('NewRegistrationPage.html', roles=roles)
 
 
 if __name__ == '__main__':
