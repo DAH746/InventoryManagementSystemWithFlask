@@ -28,8 +28,8 @@ class contains_all_urls_for_s3_buckets:
     # with a !DELAY! [to give time after upload has occured]
     def triggerSourceBucketUpdate(self):
         self._listOfAllObjectURLsFromSourceBucket = s3_bucket_operations. \
-            getAllObjectsURLsFromS3AsList(self._hasAllBucketNamesObject.getSourceBucketName())
+            getAllObjectsURLsFromS3AsList(self._hasAllBucketNamesObject.getSourceBucketName)
 
     def triggerRefactoredBucketUpdate(self):
         self._listOfAllObjectURLsFromRefactoredBucket = s3_bucket_operations.\
-            getAllObjectsURLsFromS3AsList(self._hasAllBucketNamesObject.getRefactoredBucketName())
+            getAllObjectsURLsFromS3AsList(self._hasAllBucketNamesObject.getRefactoredBucketName)
