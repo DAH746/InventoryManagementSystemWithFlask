@@ -179,6 +179,10 @@ def check_user_login():
                     msg = "Successful Login"
                     # Sets the global variable, therefore allowing this to be seen later on
                     LOGIN = True
+                    cur.execute("Select role from Users WHERE email=? AND pword=?", (email, pword,))
+                    user_role = cur.fetchall();
+                    user_role = ''.join(user_role[0])
+                    msg = "Successful Login and role is: " + user_role
                 else:
                     # If anything else is found then the login is unsucessful and so the user is told
                     msg = "Unsuccessful Login"
@@ -328,6 +332,7 @@ def disp_image():
 
 if __name__ == '__main__':
     # global LOGIN
-    global LOGIN, prod_id
+    global LOGIN, user_role
     LOGIN = False
+    user_role = "Customer"
     app.run(debug=True)  # Starts the app in debug mode
