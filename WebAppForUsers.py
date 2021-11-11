@@ -351,6 +351,14 @@ def newRegistrationPage():
 
     return render_template('NewRegistrationPage.html', roles=roles)
 
+@app.route('/clearuserlogin')
+def clearUserLogin():
+    global LOGIN, user_role, login_email
+    login_email = ""
+    LOGIN = False
+    user_role = "Customer"
+
+    return
 
 if __name__ == '__main__':
     # global LOGIN
