@@ -9,6 +9,7 @@ import s3_bucket_operations
 import bucket_names_object
 import contains_all_urls_for_s3_buckets
 from user_login_obj import user_login_obj
+from product_info_obj import product_info_obj
 
 """
 Importing serveral packages
@@ -324,7 +325,7 @@ def list_prods():
     cur.execute("select * from Inventory")
 
     rows = cur.fetchall();
-
+    print(rows)
     return render_template("listprods.html", rows=rows)
 
 
@@ -364,7 +365,6 @@ def disp_image():
 @app.route('/enternewuser')
 def newRegistrationPage():
     roles = ['Warehouse', 'Authenticator', 'Customer']
-
     return render_template('NewRegistrationPage.html', roles=roles)
 
 
@@ -452,13 +452,84 @@ def clearUserLogin():
         # return render_template("UnSuccessfulLogout.html")
     return render_template("new_result.html", msg=msg)
 
+
+@app.route('/searchproducts')
+def search_product():
+    return render_template("searchproducts.html")
+
+@app.route('/usersearch', methods=['POST', 'GET'])
+def user_search():
+    prod_name = request.form['prod_name']
+    search_prod.SetName(prod_name)
+    with sql.connect("InventoryDatabase.db") as con:
+        con.row_factory = sql.Row
+        cur = con.cursor()
+        sql_query = """select * from Inventory where prod_name=?"""
+        data = [prod_name]
+        cur.execute(sql_query, data)
+        user_search = cur.fetchall();
+        msg = "Product successfully found"
+        print(user_search)
+        if len(user_search) != 0:
+            print(user_search)
+            return render_template('dispsearchprod.html', user_search=user_search)
+        else:
+            msg = "No products found"
+            return render_template("new_result.html", msg=msg)
+
+
+@app.route('/editprod')
+def dispProdInfo():
+    authenticated = ['Yes', 'No']
+    return render_template('EditProductPage.html', authenticated=authenticated)
+
+@app.route('/editprodinfo', methods=['POST', 'GET'])
+def edit_product():
+    # Fetches information from html form
+
+    prod_name = search_prod.GetName()
+    print(prod_name)
+    price = request.form['price']
+    desc = request.form['desc']
+    quantity = request.form['quantity']
+    auth = request.form['auth']
+
+    with sql.connect("InventoryDatabase.db") as con:
+        cur = con.cursor()
+        sql_query = """Update Inventory set price=?,desc=?,quantity=?,auth=? where prod_name=?"""
+        data = (price,desc,quantity,auth,prod_name)
+        cur.execute(sql_query, data)
+        con.commit()
+        msg = "Record successfully edited"
+    return render_template("new_result.html", msg=msg)
+
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
     # global LOGIN
     #global LOGIN, user_role, login_email
+
     LOGIN = False
     user_role = "Customer"
     login_email = ""
+
     user = user_login_obj(LOGIN, login_email, user_role)
+
+    prod_id = ""
+    prod_name = ""
+
+    search_prod = product_info_obj(prod_id, prod_name)
+
     app.run(debug=True)  # Starts the app in debug mode
 
 
