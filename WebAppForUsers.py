@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import s3_bucket_operations
 import bucket_names_object
 import contains_all_urls_for_s3_buckets
+from user_login_obj import user_login_obj
 
 """
 Importing serveral packages
@@ -84,8 +85,10 @@ def home():
 
 @app.route('/oldhome')
 def oldHome():
-    print(user_role)
-    print(LOGIN)
+    # print(user_role)
+    # print(LOGIN)
+    LOGIN = user.GetLogin()
+    user_role = user.GetRole()
     if (LOGIN) and (user_role == "Warehouse" or user_role =="Authenticator"):
         return render_template('home.html')
     elif not LOGIN:
@@ -101,6 +104,10 @@ def oldHome():
 # Includes a role for who they are, depending on the role, they can use different functions.
 @app.route('/enternewuserold')
 def new_user():
+
+    LOGIN = user.GetLogin()
+    user_role = user.GetRole()
+
     if (LOGIN) and (user_role == "Warehouse" or "Authenticator"):
         roles = ['Warehouse', 'Authenticator', 'Customer']
         return render_template("newuser.html", roles=roles)
@@ -177,7 +184,12 @@ def user_login():
 # Checks if the users details entered are correct. If the email and password match for the same user then they are logged in succesfully
 @app.route('/login', methods=['POST'])
 def check_user_login():
-    global LOGIN, user_role, login_email
+    # global LOGIN, user_role, login_email
+
+    LOGIN = user.GetLogin()
+    user_role = user.GetRole()
+    login_email = user.GetEmail()
+
     if request.method == "POST":
         try:
             # Gets the information from the user
@@ -192,17 +204,21 @@ def check_user_login():
                 if len(user_info) == 1:
                     # User is told they are logged in
                     msg = "Successful Login"
-                    login_email = email
+                    # login_email = email
+                    user.SetEmail(email)
                     # Sets the global variable, therefore allowing this to be seen later on
                     LOGIN = True
+                    user.SetLogin(LOGIN)
                     cur.execute("Select role from Users WHERE email=? AND pword=?", (email, pword,))
                     user_role = cur.fetchall();
                     user_role = ''.join(user_role[0])
+                    user.SetRole(user_role)
                     msg = "Successful Login and role is: " + user_role
                 else:
                     # If anything else is found then the login is unsucessful and so the user is told
                     msg = "Unsuccessful Login"
                     LOGIN = False
+                    user.SetLogin(LOGIN)
         except:
             con.rollback()
             msg = "Error in insert operation"
@@ -354,6 +370,8 @@ def newRegistrationPage():
 
 @app.route('/userinfo')
 def check_user_info():
+    LOGIN = user.GetLogin()
+    login_email = user.SetLogin()
     if LOGIN:
         with sql.connect("UserDatabase.db") as con:
             cur = con.cursor()
@@ -399,22 +417,28 @@ def edit_user():
 def dispEditInfo():
     return render_template('EditProfilePage.html')
 
-
-
 @app.route('/clearuserlogin')
 def clearUserLogin():
-    global LOGIN, user_role, login_email
+    #global LOGIN, user_role, login_email
+    LOGIN = user.GetLogin()
     if LOGIN:
         login_email = ""
+        user.SetEmail(login_email)
         LOGIN = False
+        user.SetLogin(LOGIN)
         user_role = "Customer"
+        user.SetRole(user_role)
         return render_template("SuccessfulLogout.html")
     else:
         return render_template("UnSuccessfulLogout.html")
 
 if __name__ == '__main__':
     # global LOGIN
-    global LOGIN, user_role, login_email
+    #global LOGIN, user_role, login_email
     LOGIN = False
     user_role = "Customer"
+    login_email = ""
+    user = user_login_obj(LOGIN, login_email, user_role)
     app.run(debug=True)  # Starts the app in debug mode
+
+
