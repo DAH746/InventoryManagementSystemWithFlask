@@ -93,10 +93,10 @@ def oldHome():
         return render_template('home.html')
     elif not LOGIN:
         msg = "Please login first"
-        return render_template("result.html", msg=msg)
+        return render_template("new_result.html", msg=msg)
     else:
         msg = "Not authorised"
-        return render_template("result.html", msg=msg)
+        return render_template("new_result.html", msg=msg)
 
 
 # Called when the user wants to add a new user
@@ -113,10 +113,10 @@ def new_user():
         return render_template("newuser.html", roles=roles)
     elif not LOGIN:
         msg = "Please login first"
-        return render_template("result.html", msg=msg)
+        return render_template("new_result.html", msg=msg)
     else:
         msg = "Not authorised"
-        return render_template("result.html", msg=msg)
+        return render_template("new_result.html", msg=msg)
 
 # newuser.html routes the form to this function
 # Organises the data inputted from user for inserting to user database
@@ -157,7 +157,7 @@ def add_user():
             # Outputs the result of the operation
             # 1 of 3 options: Successfully add, not added due to existing user or error
             # Correct message will display depending on which of the 3 options happens
-            return render_template("result.html", msg=msg)
+            return render_template("new_result.html", msg=msg)
             con.close()
 
 
@@ -224,7 +224,7 @@ def check_user_login():
             msg = "Error in insert operation"
 
         finally:
-            return (render_template("result.html", msg=msg))
+            return render_template("new_result.html", msg=msg)
             con.close()
 
 # For adding new products to inventory
@@ -310,7 +310,7 @@ def add_product():
 
         finally:
 
-            return render_template("result.html", msg=msg)
+            return render_template("new_result.html", msg=msg)
             con.close()
 
 
@@ -371,7 +371,8 @@ def newRegistrationPage():
 @app.route('/userinfo')
 def check_user_info():
     LOGIN = user.GetLogin()
-    login_email = user.SetLogin()
+    login_email = user.GetEmail()
+    print(login_email)
     if LOGIN:
         with sql.connect("UserDatabase.db") as con:
             cur = con.cursor()
@@ -394,7 +395,7 @@ def check_user_info():
         return render_template("UserInfo.html", email=email,fn=fn,ln=ln,pword=pword,date_joined=date_joined,addr=addr,city=city,role=role)
     else:
         msg = "Please login first"
-        return render_template("result.html", msg=msg)
+        return render_template("new_result.html", msg=msg)
 
 @app.route('/edituserinfo', methods=['POST', 'GET'])
 def edit_user():
@@ -411,11 +412,31 @@ def edit_user():
         cur.execute(sql_query, data)
         con.commit()
         msg = "Record successfully edited"
-    return render_template("result.html", msg=msg)
+    return render_template("new_result.html", msg=msg)
 
 @app.route('/edituser')
 def dispEditInfo():
     return render_template('EditProfilePage.html')
+
+@app.route('/deleteuser')
+def delete_user():
+    LOGIN = user.GetLogin()
+    email = user.GetEmail()
+    if LOGIN and email != "":
+        with sql.connect("UserDatabase.db") as con:
+            cur = con.cursor()
+            sql_query = """DELETE FROM Users WHERE email=?"""
+            data = email
+            cur.execute(sql_query, data)
+            con.commit()
+            msg = "User successfully deleted"
+    else:
+        msg = "User not deleted"
+    return render_template("new_result.html", msg=msg)
+
+
+
+
 
 @app.route('/clearuserlogin')
 def clearUserLogin():
@@ -428,9 +449,12 @@ def clearUserLogin():
         user.SetLogin(LOGIN)
         user_role = "Customer"
         user.SetRole(user_role)
-        return render_template("SuccessfulLogout.html")
+        msg = "Log Out Successful"
+        # return render_template("SuccessfulLogout.html")
     else:
-        return render_template("UnSuccessfulLogout.html")
+        msg = "You're not logged in, please log in first."
+        # return render_template("UnSuccessfulLogout.html")
+    return render_template("new_result.html", msg=msg)
 
 if __name__ == '__main__':
     # global LOGIN
