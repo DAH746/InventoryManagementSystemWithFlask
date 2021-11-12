@@ -434,10 +434,6 @@ def delete_user():
         msg = "User not deleted"
     return render_template("new_result.html", msg=msg)
 
-
-
-
-
 @app.route('/clearuserlogin')
 def clearUserLogin():
     #global LOGIN, user_role, login_email
