@@ -426,7 +426,7 @@ def delete_user():
         with sql.connect("UserDatabase.db") as con:
             cur = con.cursor()
             sql_query = """DELETE FROM Users WHERE email=?"""
-            data = email
+            data = [email]
             cur.execute(sql_query, data)
             con.commit()
             msg = "User successfully deleted"
